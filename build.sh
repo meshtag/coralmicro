@@ -23,7 +23,7 @@ function die {
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     function nproc {
-        sysctl -n hw.logicalcpu
+        sysctl -n hw.logicalcpu 2>/dev/null || echo 1
     }
 fi
 
