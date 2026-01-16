@@ -1,0 +1,324 @@
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.010 sh=0.020
+Poses: none
+Poses: none
+  Debug heatmap max: Nose=0.010 Neck=0.020
+Poses: none
+Poses (1):
+ Pose 0 conf=0.956 kpts=3
+  RHip     x=204 y=108
+  RKnee    x=220 y=122
+  RAnkle   x=220 y=170
+Poses (1):
+ Pose 0 conf=3.167 kpts=12
+  Nose     x=340 y=122
+  Neck     x=300 y= 90
+  RShoulder x=282 y=106
+  LShoulder x=332 y= 74
+  LElbow   x=380 y=106
+  LWrist   x=378 y=132
+  RHip     x=300 y=154
+  LHip     x=330 y=124
+  REye     x=330 y=114
+  LEye     x=346 y=108
+  REar     x=306 y=130
+  LEar     x=348 y= 98
+Poses: none
+Poses (1):
+ Pose 0 conf=2.056 kpts=7
+  Nose     x=274 y=146
+  Neck     x=260 y=196
+  LShoulder x=314 y=194
+  REye     x=266 y=138
+  LEye     x=276 y=138
+  REar     x=236 y=146
+  LEar     x=290 y=140
+Poses (1):
+ Pose 0 conf=1.275 kpts=5
+  Nose     x=220 y=156
+  REye     x=202 y=140
+  LEye     x=226 y=138
+  REar     x=188 y=148
+  LEar     x=250 y=140
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.040 neck=0.020 sh=0.020
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.230 kpts=5
+  Nose     x=228 y=124
+  LShoulder x=322 y=188
+  REye     x=210 y=108
+  LEye     x=236 y=114
+  REar     x=194 y=124
+  LEar     x=250 y=114
+Poses: none
+  Debug heatmap max: Nose=0.020 Neck=0.060
+Poses: none
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.020 sh=0.120
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.101 kpts=5
+  Nose     x=226 y=124
+  REye     x=210 y=114
+  LEye     x=228 y=108
+  REar     x=194 y=122
+  LEar     x=250 y=108
+Poses: none
+  Debug heatmap max: Nose=0.010 Neck=0.010
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.040 sh=0.060
+Poses: none
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.252 kpts=5
+  Nose     x=234 y=132
+  LShoulder x=266 y=154
+  REye     x=218 y=124
+  LEye     x=236 y=122
+  REar     x=188 y=146
+  LEar     x=250 y=116
+Poses (1):
+ Pose 0 conf=0.764 kpts=3
+  RShoulder x=234 y= 82
+  RElbow   x=250 y= 92
+  RWrist   x=266 y=122
+Poses (1):
+ Pose 0 conf=1.191 kpts=5
+  Nose     x=212 y=138
+  LShoulder x=268 y=154
+  REye     x=218 y=124
+  LEye     x=236 y=122
+  REar     x=180 y=162
+  LEar     x=252 y=122
+Poses (1):
+ Pose 0 conf=0.616 kpts=3
+  RHip     x=172 y= 84
+  RKnee    x=234 y= 76
+  RAnkle   x=266 y=122
+Poses (1):
+ Pose 0 conf=0.609 kpts=3
+  RHip     x=180 y= 82
+  RKnee    x=234 y= 76
+  RAnkle   x=260 y=122
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.010 sh=0.010
+Poses: none
+Poses: none
+Poses: none
+  Debug heatmap max: Nose=0.090 Neck=0.020
+Poses (1):
+ Pose 0 conf=1.248 kpts=4
+  Nose     x=196 y=116
+  REye     x=194 y= 98
+  LEye     x=210 y=100
+  LEar     x=228 y=100
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.030 neck=0.010 sh=0.010
+Poses: none
+Poses (1):
+ Pose 0 conf=1.461 kpts=4
+  Nose     x=188 y=114
+  LShoulder x=292 y=194
+  REye     x=186 y=100
+  LEye     x=220 y=100
+  LEar     x=236 y=106
+Poses: none
+Poses (1):
+ Pose 0 conf=1.117 kpts=5
+  Nose     x=210 y=122
+  REye     x=204 y=114
+  LEye     x=218 y=114
+  REar     x=188 y=122
+  LEar     x=234 y=114
+Poses: none
+Poses: none
+  Debug heatmap max: Nose=0.010 Neck=0.010
+Poses: none
+Poses (2):
+ Pose 0 conf=0.671 kpts=3
+  Nose     x=228 y=132
+  REye     x=220 y=124
+  REar     x=196 y=138
+ Pose 1 conf=0.856 kpts=4
+  Nose     x=204 y=140
+  REye     x=196 y=138
+  LEye     x=228 y=124
+  LEar     x=244 y=124
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.030 sh=0.040
+Poses: none
+Poses (1):
+ Pose 0 conf=1.314 kpts=5
+  Nose     x=228 y=138
+  LShoulder x=284 y=196
+  REye     x=220 y=130
+  LEye     x=234 y=124
+  REar     x=202 y=138
+  LEar     x=250 y=130
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+  Debug heatmap max: Nose=0.020 Neck=0.050
+Poses: none
+Poses (1):
+ Pose 0 conf=1.267 kpts=5
+  Nose     x=234 y=148
+  REye     x=218 y=138
+  LEye     x=236 y=132
+  REar     x=210 y=140
+  LEar     x=250 y=124
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.060 sh=0.060
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.319 kpts=4
+  Nose     x=228 y=146
+  REye     x=218 y=132
+  LEye     x=236 y=130
+  LEar     x=252 y=124
+Poses: none
+Poses (1):
+ Pose 0 conf=1.586 kpts=5
+  Nose     x=226 y=146
+  LShoulder x=268 y=162
+  REye     x=218 y=132
+  LEye     x=234 y=130
+  REar     x=204 y=140
+  LEar     x=252 y=130
+Poses: none
+Poses: none
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.628 kpts=8
+  Nose     x=212 y=140
+  Neck     x=218 y=196
+  RShoulder x=338 y=236
+  LShoulder x=290 y=242
+  REye     x=204 y=124
+  LEye     x=234 y=124
+  REar     x=204 y=132
+  LEar     x=252 y=130
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.040 neck=0.010 sh=0.030
+Poses (1):
+ Pose 0 conf=1.124 kpts=5
+  Nose     x=212 y=138
+  REye     x=202 y=130
+  LEye     x=228 y=124
+  REar     x=170 y=156
+  LEar     x=250 y=130
+Poses (1):
+ Pose 0 conf=0.991 kpts=4
+  Nose     x=212 y=140
+  REye     x=202 y=130
+  LEye     x=234 y=124
+  LEar     x=244 y=130
+Poses (1):
+ Pose 0 conf=1.791 kpts=7
+  Nose     x=220 y=140
+  Neck     x=236 y=196
+  LShoulder x=274 y=194
+  REye     x=212 y=130
+  LEye     x=236 y=124
+  REar     x=210 y=132
+  LEar     x=258 y=132
+Poses (1):
+ Pose 0 conf=0.806 kpts=4
+  Neck     x=226 y=100
+  RHip     x=236 y=106
+  RKnee    x=268 y=124
+  RAnkle   x=274 y=156
+Poses: none
+Poses: none
+  Debug heatmap max: Nose=0.010 Neck=0.010
+Poses: none
+Poses (1):
+ Pose 0 conf=1.406 kpts=5
+  Nose     x=244 y=140
+  REye     x=234 y=132
+  LEye     x=266 y=132
+  REar     x=218 y=138
+  LEar     x=284 y=132
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.060 neck=0.010 sh=0.010
+Poses (1):
+ Pose 0 conf=1.248 kpts=5
+  Nose     x=244 y=140
+  REye     x=236 y=130
+  LEye     x=266 y=130
+  REar     x=218 y=138
+  LEar     x=284 y=132
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.770 kpts=7
+  Nose     x=266 y=138
+  Neck     x=242 y=194
+  LShoulder x=300 y=202
+  REye     x=258 y=132
+  LEye     x=266 y=132
+  REar     x=234 y=140
+  LEar     x=290 y=132
+Poses (1):
+ Pose 0 conf=0.841 kpts=3
+  LShoulder x=154 y=114
+  LElbow   x=140 y=100
+  LWrist   x=108 y= 82
+  LEar     x=164 y=108
+Poses: none
+Poses: none
+Poses (1):
+ Pose 0 conf=1.335 kpts=6
+  Nose     x=252 y=146
+  Neck     x=220 y=164
+  REye     x=244 y=132
+  LEye     x=258 y=130
+  REar     x=234 y=140
+  LEar     x=276 y=132
+Poses: none
+Poses: none
+Debug input: min=-0.500 max=0.496 heatmax: nose=0.010 neck=0.020 sh=0.020
+Poses: none
+  Debug heatmap max: Nose=0.010 Neck=0.020
+Poses: none
+Poses (1):
+ Pose 0 conf=2.340 kpts=7
+  Nose     x=266 y=132
+  Neck     x=242 y=204
+  LShoulder x=300 y=210
+  REye     x=250 y=124
+  LEye     x=266 y=124
+  REar     x=234 y=138
+  LEar     x=282 y=124
+Poses (1):
+ Pose 0 conf=0.676 kpts=3
+  LShoulder x=154 y=108
+  LElbow   x=138 y=100
+  LWrist   x=114 y= 84
+Poses: none
+Poses: none
+Poses: none

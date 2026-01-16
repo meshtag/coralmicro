@@ -58,6 +58,10 @@ constexpr int kSuppressionRadius = 6;
 constexpr int kNumKeypoints = 18;
 constexpr int kPoseEntrySize = 20;
 constexpr int kUpsampleFactor = 4;
+constexpr char kIndexFileName[] = "/coral_micro_camera.html";
+constexpr char kCameraStreamUrl[] = "/camera_stream";
+constexpr char kCameraStreamRawUrl[] = "/camera_stream_raw";
+constexpr char kPoseDataUrl[] = "/pose_data";
 
 constexpr int kBodyPartsKptIds[19][2] = {
     {1, 2},  {1, 5},  {2, 3},  {3, 4},  {5, 6},  {6, 7},  {1, 8},
@@ -81,6 +85,8 @@ const TfLiteTensor* pafs[2] = {nullptr, nullptr};
 TfLiteTensor* input = nullptr;
 int model_height = 0;
 int model_width = 0;
+uint32_t frame_id = 0;
+std::vector<uint8_t> last_pose_json;
 
 struct Peak {
   int x;
@@ -94,6 +100,8 @@ struct Pose {
   float confidence;
   int found;
 };
+
+void BuildPoseJson(const std::vector<Pose>& poses);
 
 float DequantValue(const TfLiteTensor* tensor, int idx) {
   const auto* data = tflite::GetTensorData<int8_t>(tensor);
@@ -549,14 +557,30 @@ void InitInterpreter() {
   }
   printf("Pose stream init: input %dx%dx%d\r\n", model_height, model_width,
          input->dims->data[3]);
+  frame_id = 0;
+  BuildPoseJson({});
 }
 
-HttpServer::Content UriHandler(const char* uri) {
-  if (!StrEndsWith(uri, "index.shtml") &&
-      !StrEndsWith(uri, "coral_micro_camera.html") &&
-      !StrEndsWith(uri, "/camera_stream")) {
-    return {};
+void BuildPoseJson(const std::vector<Pose>& poses) {
+  last_pose_json.clear();
+  StrAppend(&last_pose_json,
+            "{\"frame_id\":%lu,\"width\":%d,\"height\":%d,\"poses\":[",
+            static_cast<unsigned long>(frame_id), model_width, model_height);
+  for (size_t i = 0; i < poses.size(); ++i) {
+    if (i > 0) StrAppend(&last_pose_json, ",");
+    StrAppend(&last_pose_json, "{\"confidence\":%.3f,\"found\":%d,\"keypoints\":[",
+              poses[i].confidence, poses[i].found);
+    for (int k = 0; k < kNumKeypoints; ++k) {
+      if (k > 0) StrAppend(&last_pose_json, ",");
+      StrAppend(&last_pose_json, "[%d,%d]", poses[i].keypoints[k][0],
+                poses[i].keypoints[k][1]);
+    }
+    StrAppend(&last_pose_json, "]}");
   }
+  StrAppend(&last_pose_json, "]}");
+}
+
+HttpServer::Content CaptureFrame(bool draw_overlay) {
   static std::vector<uint8_t> rgb_buf;
   static bool buffers_ready = false;
   if (!buffers_ready) {
@@ -596,13 +620,36 @@ HttpServer::Content UriHandler(const char* uri) {
     poses = DecodePoses(heatmaps[0], heatmaps[1], pafs[0], pafs[1],
                         model_height, model_width, /*upsample_factor=*/1);
   }
-  for (const auto& p : poses) {
-    DrawPose(rgb_buf.data(), model_width, model_height, p);
+
+  ++frame_id;
+  BuildPoseJson(poses);
+
+  if (draw_overlay) {
+    for (const auto& p : poses) {
+      DrawPose(rgb_buf.data(), model_width, model_height, p);
+    }
   }
 
   std::vector<uint8_t> jpeg;
   JpegCompressRgb(rgb_buf.data(), fmt.width, fmt.height, /*quality=*/75, &jpeg);
   return jpeg;
+}
+
+HttpServer::Content UriHandler(const char* uri) {
+  if (StrEndsWith(uri, "index.shtml") ||
+      StrEndsWith(uri, "coral_micro_camera.html")) {
+    return std::string(kIndexFileName);
+  }
+  if (StrEndsWith(uri, kCameraStreamRawUrl)) {
+    return CaptureFrame(/*draw_overlay=*/false);
+  }
+  if (StrEndsWith(uri, kCameraStreamUrl)) {
+    return CaptureFrame(/*draw_overlay=*/true);
+  }
+  if (StrEndsWith(uri, kPoseDataUrl)) {
+    return last_pose_json;
+  }
+  return {};
 }
 
 void Main() {
