@@ -30,6 +30,7 @@
 #include "third_party/tflite-micro/tensorflow/lite/micro/micro_error_reporter.h"
 #include "third_party/tflite-micro/tensorflow/lite/micro/micro_interpreter.h"
 #include "third_party/tflite-micro/tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#include "third_party/tflite-micro/tensorflow/lite/micro/micro_time.h"
 
 namespace coralmicro {
 namespace {
@@ -44,6 +45,9 @@ constexpr int kNumKeypoints = 18;  // background channel is ignored
 constexpr int kPointsPerLimb = 10;
 constexpr int kPoseEntrySize = 20;
 constexpr int kSuppressionRadius = 6;
+constexpr int kMetricsInterval = 10;
+// Total MACs from eval_summary.csv (7.6560 GMACs).
+constexpr int64_t kModelOps = 7656000000;
 
 constexpr int kBodyPartsKptIds[19][2] = {
     {1, 2},  {1, 5},  {2, 3},  {3, 4},  {5, 6},  {6, 7},  {1, 8},
@@ -483,6 +487,11 @@ std::vector<Pose> DecodePoses(const TfLiteTensor* heatmap_a,
   printf("Input: %dx%dx%d (HxWxC) scale=%f zp=%ld\r\n", model_height,
          model_width, model_channels, input->params.scale,
          static_cast<long>(input->params.zero_point));
+  printf("Tensor arena used: %u bytes\r\n",
+         static_cast<unsigned int>(interpreter.arena_used_bytes()));
+  if (kModelOps <= 0) {
+    printf("Metrics: set kModelOps to enable ops/cycle reporting\r\n");
+  }
 
   // Capture into a uint8 buffer, then shift to int8 (zero-point = 0).
   std::vector<uint8_t> camera_buffer(input->bytes);
@@ -510,7 +519,17 @@ std::vector<Pose> DecodePoses(const TfLiteTensor* heatmap_a,
     vTaskSuspend(nullptr);
   }
 
+  // Initialize cycle counter used by tflite::GetCurrentTimeTicks().
+  (void)tflite::GetCurrentTimeTicks();
+  uint64_t capture_sum = 0;
+  uint64_t preprocess_sum = 0;
+  uint64_t invoke_sum = 0;
+  uint64_t decode_sum = 0;
+  uint64_t total_sum = 0;
+  int metrics_frames = 0;
+
   while (true) {
+    const uint32_t t0 = tflite::GetCurrentTimeTicks();
     CameraFrameFormat fmt{
         /*fmt=*/CameraFormat::kRgb,
         /*filter=*/CameraFilterMethod::kBilinear,
@@ -523,6 +542,7 @@ std::vector<Pose> DecodePoses(const TfLiteTensor* heatmap_a,
       printf("Failed to capture image\r\n");
       vTaskSuspend(nullptr);
     }
+    const uint32_t t1 = tflite::GetCurrentTimeTicks();
 
     auto* input_data = tflite::GetTensorData<int8_t>(input);
     // Convert RGB camera buffer to BGR (model was trained on OpenCV BGR) and
@@ -535,10 +555,60 @@ std::vector<Pose> DecodePoses(const TfLiteTensor* heatmap_a,
       input_data[i + 1] = static_cast<int8_t>(static_cast<int>(g) - 128);
       input_data[i + 2] = static_cast<int8_t>(static_cast<int>(r) - 128);
     }
+    const uint32_t t2 = tflite::GetCurrentTimeTicks();
 
     if (interpreter.Invoke() != kTfLiteOk) {
       printf("Failed to invoke\r\n");
       vTaskSuspend(nullptr);
+    }
+    const uint32_t t3 = tflite::GetCurrentTimeTicks();
+
+    auto poses =
+        DecodePoses(heatmaps[0], heatmaps[1], pafs[0], pafs[1], model_height,
+                    model_width, /*upsample_factor=*/4);
+    bool used_fallback = false;
+    if (poses.empty()) {
+      poses = DecodePoses(heatmaps[0], heatmaps[1], pafs[0], pafs[1],
+                          model_height, model_width, /*upsample_factor=*/1);
+      used_fallback = !poses.empty();
+    }
+    const uint32_t t4 = tflite::GetCurrentTimeTicks();
+
+    capture_sum += t1 - t0;
+    preprocess_sum += t2 - t1;
+    invoke_sum += t3 - t2;
+    decode_sum += t4 - t3;
+    total_sum += t4 - t0;
+    metrics_frames += 1;
+    if (metrics_frames >= kMetricsInterval) {
+      const uint64_t capture_avg = capture_sum / metrics_frames;
+      const uint64_t preprocess_avg = preprocess_sum / metrics_frames;
+      const uint64_t invoke_avg = invoke_sum / metrics_frames;
+      const uint64_t decode_avg = decode_sum / metrics_frames;
+      const uint64_t total_avg = total_sum / metrics_frames;
+      printf("Metrics (avg %d frames): capture=%lu preprocess=%lu "
+             "invoke=%lu decode=%lu total=%lu cycles\r\n",
+             metrics_frames,
+             static_cast<unsigned long>(capture_avg),
+             static_cast<unsigned long>(preprocess_avg),
+             static_cast<unsigned long>(invoke_avg),
+             static_cast<unsigned long>(decode_avg),
+             static_cast<unsigned long>(total_avg));
+      if (kModelOps > 0 && invoke_avg > 0) {
+        const double ops_per_cycle_invoke =
+            static_cast<double>(kModelOps) / static_cast<double>(invoke_avg);
+        const double ops_per_cycle_total =
+            static_cast<double>(kModelOps) / static_cast<double>(total_avg);
+        printf("Ops/cycle: invoke=%.6f total=%.6f (ops=%.0f)\r\n",
+               ops_per_cycle_invoke, ops_per_cycle_total,
+               static_cast<double>(kModelOps));
+      }
+      capture_sum = 0;
+      preprocess_sum = 0;
+      invoke_sum = 0;
+      decode_sum = 0;
+      total_sum = 0;
+      metrics_frames = 0;
     }
 
     static int frame_counter = 0;
@@ -551,15 +621,6 @@ std::vector<Pose> DecodePoses(const TfLiteTensor* heatmap_a,
              in_stats.min_v, in_stats.max_v, hm0, hm1, hm_all);
     }
 
-    auto poses =
-        DecodePoses(heatmaps[0], heatmaps[1], pafs[0], pafs[1], model_height,
-                    model_width, /*upsample_factor=*/4);
-    bool used_fallback = false;
-    if (poses.empty()) {
-      poses = DecodePoses(heatmaps[0], heatmaps[1], pafs[0], pafs[1],
-                          model_height, model_width, /*upsample_factor=*/1);
-      used_fallback = !poses.empty();
-    }
     static int dbg_counter = 0;
     if (poses.empty()) {
       printf("Poses: none\r\n");
